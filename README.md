@@ -2,6 +2,6 @@
 
 ## Contents
 
-[sep-dec-2025-lock-in/goals](https://vampslayer.github.io/my-pages/sep-dec-2025-lock-in/goals)
+[sep-dec-2025-lock-in/goals](https://vampslayer.github.io/sep-dec-2025-lock-in/goals)
 
-[cv](https://vampslayer.github.io/my-pages/cv)
+[cv](https://vampslayer.github.io/cv)
