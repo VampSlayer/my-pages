@@ -1,4 +1,4 @@
-# my-pages
+# vampslayer.github.io
 
 ## Contents
 
