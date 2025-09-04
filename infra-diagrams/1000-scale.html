@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Managed App (1000 Concurrent) — Infographic</title>
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --chip: #f1f5f9;
+        --shadow: 0 1px 2px rgba(2, 6, 23, 0.05),
+          0 8px 24px rgba(2, 6, 23, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px;
+        position: relative;
+        z-index: 1;
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 28px;
+      }
+      .lead {
+        color: var(--muted);
+        margin: 0;
+      }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        border: 1px solid var(--border);
+        background: #fff;
+        border-radius: 999px;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .btn.active {
+        background: #0b0b0b;
+        color: #fff;
+      }
+      .metric {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        padding: 10px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+      @media (max-width: 980px) {
+        .grid-4 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 720px) {
+        .grid-3,
+        .grid-4,
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 16px;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .title {
+        font-weight: 600;
+        margin: 2px 0 8px;
+        font-size: 18px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chip {
+        background: var(--chip);
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 12px;
+      }
+      ul {
+        padding-left: 18px;
+        margin: 0;
+      }
+      li {
+        margin: 6px 0;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        font-size: 14px;
+      }
+      .legend .label {
+        font-weight: 600;
+        margin-right: 6px;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header
+        style="
+          display: flex;
+          justify-content: space-between;
+          gap: 12px;
+          align-items: flex-end;
+          margin-bottom: 12px;
+        "
+      >
+        <div>
+          <h1>Managed Infrastructure for ~1000 Concurrent Users</h1>
+          <p class="lead">
+            Plain HTML + JS infographic. Fully managed, click-ops, no IaC.
+          </p>
+        </div>
+        <div class="toolbar" role="tablist" aria-label="Cloud selector">
+          <button class="btn active" id="btn-aws" aria-selected="true">
+            AWS
+          </button>
+          <button class="btn" id="btn-gcp" aria-selected="false">GCP</button>
+          <button class="btn" id="btn-azure" aria-selected="false">
+            Azure
+          </button>
+        </div>
+      </header>
+
+      <section class="grid-2" style="margin-bottom: 8px">
+        <div class="metric">
+          Scenario: <strong>1000 concurrent users</strong> ×
+          <strong>30 min/day</strong> → assume
+          <strong>0.2–0.4 req/s/user</strong> during peak hours ⇒ **~200–400
+          RPS** to API (design for 600–800 RPS headroom). Static assets are
+          CDN-cached.
+        </div>
+        <div class="legend card">
+          <span class="label">Legend:</span>
+          <span class="chip">Primary path</span>
+          <span class="chip">Recommended</span>
+          <span class="chip">Edge cache</span>
+        </div>
+      </section>
+
+      <!-- Edge & Static -->
+      <section class="grid-3">
+        <div class="card" id="cdn">
+          <div class="subtitle">Edge</div>
+          <div class="title" id="cdn-title">CloudFront (CDN)</div>
+          <div style="font-size: 14px">
+            TLS, caching, WAF, geo-routing; cache static + cacheable GET APIs.
+          </div>
+          <div class="chips" style="margin-top: 8px">
+            <span class="chip">Immutable assets</span
+            ><span class="chip">API GET 30–120s</span
+            ><span class="chip">WAF/DDoS</span>
+          </div>
+        </div>
+        <div class="card" id="static">
+          <div class="subtitle">Static hosting</div>
+          <div class="title" id="static-title">S3 Static Website</div>
+          <div style="font-size: 14px">
+            SPA/assets from object storage behind CDN.
+          </div>
+        </div>
+        <div class="card" id="gateway">
+          <div class="subtitle">Routing</div>
+          <div class="title" id="gateway-title">API Gateway (HTTP)</div>
+          <div style="font-size: 14px">
+            Authn/z, rate limits (e.g., 800 RPS burst 1600), canary deploys.
+          </div>
+        </div>
+      </section>
+
+      <!-- Core Compute/Data -->
+      <section class="grid-4" style="margin-top: 16px">
+        <div class="card" id="compute">
+          <div class="subtitle">Compute</div>
+          <div class="title" id="compute-title">
+            Lambda (1024–1536MB, PC=20–40)
+          </div>
+          <ul>
+            <li>
+              Provisioned Concurrency 20–40 to avoid cold starts under burst.
+            </li>
+            <li>
+              Reserved concurrency ≈ <strong>600–800</strong> (headroom above
+              peak RPS).
+            </li>
+          </ul>
+        </div>
+        <div class="card" id="db">
+          <div class="subtitle">Database</div>
+          <div class="title" id="db-title">Aurora Serverless v2 (Postgres)</div>
+          <ul>
+            <li>
+              Capacity range: <strong>2–16 ACU</strong> (auto); tune max to
+              workload.
+            </li>
+            <li id="db-extra">
+              Use <strong>RDS Proxy</strong>; add 1–2
+              <strong>read replicas</strong> or reader endpoint for heavy reads.
+            </li>
+          </ul>
+        </div>
+        <div class="card" id="object">
+          <div class="subtitle">Files</div>
+          <div class="title" id="object-title">S3 (presigned uploads)</div>
+          <div style="font-size: 14px">
+            Serve via CDN; offload binary traffic from API.
+          </div>
+        </div>
+        <div class="card" id="auth">
+          <div class="subtitle">Identity</div>
+          <div class="title" id="auth-title">Cognito (Hosted UI)</div>
+          <div style="font-size: 14px">MFA/flows managed; JWTs for APIs.</div>
+        </div>
+      </section>
+
+      <!-- Recommended add-ons at this scale -->
+      <section class="grid-4" style="margin-top: 16px">
+        <div class="card" id="cache">
+          <div class="subtitle">Recommended</div>
+          <div class="title" id="cache-title">
+            ElastiCache Redis (small–medium)
+          </div>
+          <div style="font-size: 14px">
+            Cache hot reads (item lists, profiles) TTL 60–300s; session store if
+            needed.
+          </div>
+        </div>
+        <div class="card" id="queue">
+          <div class="subtitle">Recommended</div>
+          <div class="title" id="queue-title">SQS + Lambda (workers)</div>
+          <div style="font-size: 14px">
+            Async emails, webhooks, image processing; retry/backoff outside
+            request path.
+          </div>
+        </div>
+        <div class="card" id="obs">
+          <div class="subtitle">Ops</div>
+          <div class="title" id="obs-title">CloudWatch + X-Ray</div>
+          <div style="font-size: 14px">
+            Alarms on p95 latency, 5xx, throttles; traces for hotspots.
+          </div>
+        </div>
+        <div class="card" id="security">
+          <div class="subtitle">Security</div>
+          <div class="title" id="sec-title">WAF + Secrets Manager</div>
+          <div style="font-size: 14px">
+            Rate-limit abusive IPs; rotate secrets; param store for configs.
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      (function () {
+        // --- Cloud selector ---
+        const clouds = {
+          aws: {
+            cdn: "CloudFront (CDN)",
+            static: "S3 Static Website",
+            gateway: "API Gateway (HTTP)",
+            compute: "Lambda (1024–1536MB, PC=20–40)",
+            db: "Aurora Serverless v2 (Postgres)",
+            dbextra: "Use RDS Proxy; add reader endpoint.",
+            object: "S3 (presigned uploads)",
+            auth: "Cognito (Hosted UI)",
+            cache: "ElastiCache Redis (small–medium)",
+            queue: "SQS + Lambda (workers)",
+            obs: "CloudWatch + X-Ray",
+            sec: "WAF + Secrets Manager",
+          },
+          gcp: {
+            cdn: "Cloud CDN",
+            static: "Cloud Storage (website)",
+            gateway: "API Gateway / Cloud Endpoints",
+            compute: "Cloud Run (min 2–3, conc. 40–80)",
+            db: "Cloud SQL (Postgres) 2–4 vCPU + pooler",
+            dbextra: "Use connection pooling (pgBouncer).",
+            object: "Cloud Storage + signed URLs",
+            auth: "Identity Platform",
+            cache: "Memorystore Redis (standard small)",
+            queue: "Pub/Sub + Cloud Run jobs",
+            obs: "Cloud Monitoring + Trace",
+            sec: "Cloud Armor + Secret Manager",
+          },
+          azure: {
+            cdn: "Front Door + CDN",
+            static: "Storage Static Website",
+            gateway: "API Management / Front Door routing",
+            compute: "Container Apps (min 2, autoscale) or Functions EP1–EP2",
+            db: "Azure PostgreSQL Flexible (2–4 vCPU)",
+            dbextra: "Enable connection pooling.",
+            object: "Blob Storage + SAS",
+            auth: "Entra ID B2C",
+            cache: "Azure Cache for Redis (C1–C2)",
+            queue: "Service Bus + Functions",
+            obs: "App Insights + Log Analytics",
+            sec: "Front Door WAF + Key Vault",
+          },
+        };
+
+        const mapIds = {
+          cdn: "cdn-title",
+          static: "static-title",
+          gateway: "gateway-title",
+          compute: "compute-title",
+          db: "db-title",
+          dbextra: "db-extra",
+          object: "object-title",
+          auth: "auth-title",
+          cache: "cache-title",
+          queue: "queue-title",
+          obs: "obs-title",
+          sec: "sec-title",
+        };
+
+        function setCloud(name) {
+          const cfg = clouds[name];
+          for (const k in mapIds) {
+            const el = document.getElementById(mapIds[k]);
+            if (el && cfg[k]) el.textContent = cfg[k];
+          }
+          btnAWS.classList.toggle("active", name === "aws");
+          btnAWS.setAttribute("aria-selected", name === "aws");
+          btnGCP.classList.toggle("active", name === "gcp");
+          btnGCP.setAttribute("aria-selected", name === "gcp");
+          btnAzure.classList.toggle("active", name === "azure");
+          btnAzure.setAttribute("aria-selected", name === "azure");
+        }
+
+        const btnAWS = document.getElementById("btn-aws");
+        const btnGCP = document.getElementById("btn-gcp");
+        const btnAzure = document.getElementById("btn-azure");
+        btnAWS.addEventListener("click", () => setCloud("aws"));
+        btnGCP.addEventListener("click", () => setCloud("gcp"));
+        btnAzure.addEventListener("click", () => setCloud("azure"));
+
+        document.addEventListener("readystatechange", () => {
+          if (document.readyState === "complete") {
+            setCloud("aws");
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

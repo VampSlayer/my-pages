@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eBay-Scale Marketplace Architecture</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #f9fafb;
+        color: #111827;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+      }
+      h1 {
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
+      p {
+        color: #4b5563;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      .box {
+        background: white;
+        border-radius: 16px;
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .box .subtitle {
+        font-size: 0.9rem;
+        color: #6b7280;
+      }
+      .box .title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .pill {
+        display: inline-block;
+        font-size: 0.75rem;
+        background: #f3f4f6;
+        border-radius: 9999px;
+        padding: 2px 8px;
+        margin: 2px;
+      }
+      .legend,
+      .flows {
+        background: white;
+        border-radius: 16px;
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        margin-top: 20px;
+      }
+      button {
+        padding: 6px 12px;
+        border-radius: 9999px;
+        border: 1px solid #000;
+        background: white;
+        cursor: pointer;
+        margin-left: 4px;
+      }
+      button.active {
+        background: black;
+        color: white;
+      }
+      ol {
+        padding-left: 20px;
+      }
+      ul {
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          flex-wrap: wrap;
+        "
+      >
+        <div>
+          <h1>eBay-Scale Marketplace Architecture</h1>
+          <p>
+            High-level, partition-first, event-driven microservices layout with
+            read/write separation.
+          </p>
+        </div>
+        <div>
+          <button id="browseBtn" class="active">Browse/Search flow</button>
+          <button id="orderBtn">List → Buy → Pay flow</button>
+        </div>
+      </header>
+
+      <div
+        class="grid"
+        style="
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          margin-top: 20px;
+        "
+      >
+        <div class="box">
+          <div class="subtitle">Static + edge compute</div>
+          <div class="title">CDN / Edge</div>
+          <div>
+            TLS termination, static assets, bot filtering, geo/AB flags.
+          </div>
+          <div>
+            <span class="pill">HTML/JS/CSS</span
+            ><span class="pill">API cache</span><span class="pill">WAF</span
+            ><span class="pill">Feature flags</span>
+          </div>
+        </div>
+        <div class="box">
+          <div class="subtitle">Anycast + GSLB</div>
+          <div class="title">Global Traffic Mgmt</div>
+          <div>Latency-based routing, health checks, failover.</div>
+        </div>
+        <div class="box">
+          <div class="subtitle">Rate limit & authn/z</div>
+          <div class="title">API Gateway</div>
+          <div>JWT/session, request shaping, canaries.</div>
+        </div>
+      </div>
+
+      <div
+        class="grid"
+        style="
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          margin-top: 20px;
+        "
+      >
+        <div class="box">
+          <div class="subtitle">Stateless services</div>
+          <div class="title">Web/App Tier</div>
+          <div>SSR/SPA backends, BFFs, orchestration.</div>
+          <div>
+            <span class="pill">Auto-scale</span
+            ><span class="pill">Blue/Green</span
+            ><span class="pill">Canary</span>
+          </div>
+        </div>
+        <div class="box">
+          <div class="subtitle">Microservices</div>
+          <div class="title">Domain Services</div>
+          <div
+            class="grid"
+            style="
+              grid-template-columns: repeat(2, 1fr);
+              gap: 4px;
+              font-size: 0.85rem;
+              margin-top: 8px;
+            "
+          >
+            <div class="pill">Users</div>
+            <div class="pill">Listings</div>
+            <div class="pill">Offers/Bids</div>
+            <div class="pill">Cart/Checkout</div>
+            <div class="pill">Payments</div>
+            <div class="pill">Shipping</div>
+            <div class="pill">Notifications</div>
+            <div class="pill">Recommendations</div>
+          </div>
+        </div>
+        <div class="box">
+          <div class="subtitle">Async backbone</div>
+          <div class="title">Event Bus / Streams</div>
+          <div>Ordered topics, DLQs, replays; back-pressure friendly.</div>
+          <div>
+            <span class="pill">Kafka/Pulsar</span
+            ><span class="pill">Pub/Sub</span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="grid"
+        style="
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          margin-top: 20px;
+        "
+      >
+        <div class="box">
+          <div class="subtitle">Sharded OLTP</div>
+          <div class="title">TX Stores</div>
+          <div>Listings, Orders, Users; logical shards & replicas.</div>
+        </div>
+        <div class="box">
+          <div class="subtitle">Read-mostly</div>
+          <div class="title">Caches</div>
+          <div>Item pages, facets, sessions, computed views.</div>
+        </div>
+        <div class="box">
+          <div class="subtitle">CQRS Read Model</div>
+          <div class="title">Search Platform</div>
+          <div>Near-real-time indexing, query federation, ranking.</div>
+        </div>
+        <div class="box">
+          <div class="subtitle">Images & docs</div>
+          <div class="title">Object/Blob</div>
+          <div>Image CDN, media processing, versions.</div>
+        </div>
+      </div>
+
+      <div
+        class="grid"
+        style="
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          margin-top: 20px;
+        "
+      >
+        <div class="box">
+          <div class="subtitle">Metrics/Logs/Traces</div>
+          <div class="title">Observability</div>
+          <div>Golden signals, tracing, SLOs.</div>
+        </div>
+        <div class="box">
+          <div class="subtitle">CI/CD & Governance</div>
+          <div class="title">SRE / Platform</div>
+          <div>Service catalog, dependency graph, rollbacks.</div>
+        </div>
+        <div class="box">
+          <div class="subtitle">Runtime + data</div>
+          <div class="title">Security & Compliance</div>
+          <div>Secrets, tokenization, PCI zones.</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <strong>Legend:</strong> <span class="pill">Hot path cache</span
+        ><span class="pill">Async event</span
+        ><span class="pill">Shard boundary</span
+        ><span class="pill">Read model</span>
+      </div>
+
+      <div class="flows">
+        <div id="browseFlow">
+          <div class="title">Browse/Search Flow</div>
+          <ol>
+            <li>
+              Browser hits <strong>CDN/Edge</strong> → static assets + edge
+              caching.
+            </li>
+            <li><strong>API Gateway</strong> → auth, rate limit, canary.</li>
+            <li>
+              <strong>Web/App</strong> → orchestrates queries to
+              <strong>Domain Services</strong>.
+            </li>
+            <li>
+              <strong>Domain Services</strong> read via
+              <strong>Caches</strong> and <strong>Search</strong> (CQRS read
+              model).
+            </li>
+            <li>
+              Cache miss → <strong>TX Stores</strong> for source of truth;
+              results backfill cache.
+            </li>
+            <li>
+              Telemetry → <strong>Observability</strong>;
+              <strong>Event Bus</strong> for async side-effects.
+            </li>
+          </ol>
+        </div>
+        <div id="orderFlow" style="display: none">
+          <div class="title">List → Buy → Pay Flow</div>
+          <ol>
+            <li>
+              User creates listing via <strong>Web/App</strong> →
+              <strong>Listings Service</strong>.
+            </li>
+            <li>
+              Write to <strong>TX Stores (sharded)</strong> with constraints &
+              idempotency.
+            </li>
+            <li>
+              Emit <strong>Events</strong> → <strong>Search Ingest</strong> +
+              <strong>Cache invalidation</strong>.
+            </li>
+            <li>
+              Buyer adds to cart → <strong>Offers/Cart</strong> → reserves
+              inventory (saga/locks).
+            </li>
+            <li>
+              Checkout → <strong>Payments</strong> (PCI zone) → success event →
+              <strong>Orders/Shipping</strong>.
+            </li>
+            <li>
+              Async workflows (emails, analytics, fraud) consume from
+              <strong>Event Bus</strong>.
+            </li>
+          </ol>
+        </div>
+        <div class="title">Key Patterns</div>
+        <ul>
+          <li>
+            Partition-first (by user, item, region) to limit blast radius.
+          </li>
+          <li>Stateless compute tiers for elastic scale.</li>
+          <li>CQRS: separate read models (search/caches) from write path.</li>
+          <li>Event-driven for decoupling and peak smoothing.</li>
+          <li>Strong observability + SRE automation.</li>
+        </ul>
+      </div>
+    </div>
+    <script>
+      const browseBtn = document.getElementById("browseBtn");
+      const orderBtn = document.getElementById("orderBtn");
+      const browseFlow = document.getElementById("browseFlow");
+      const orderFlow = document.getElementById("orderFlow");
+
+      browseBtn.addEventListener("click", () => {
+        browseFlow.style.display = "block";
+        orderFlow.style.display = "none";
+        browseBtn.classList.add("active");
+        orderBtn.classList.remove("active");
+      });
+
+      orderBtn.addEventListener("click", () => {
+        browseFlow.style.display = "none";
+        orderFlow.style.display = "block";
+        orderBtn.classList.add("active");
+        browseBtn.classList.remove("active");
+      });
+    </script>
+  </body>
+</html>
